@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import RideSwiftLogo from '../Images/SwiftRideX.png';
 import Bg from '../Images/bg.jpg';
 
-const Home = () => {
+const Start = () => {
   return (
     <div>
       <div className='h-screen pt-8  flex justify-between flex-col w-full  bg-cover bg-center' style={{ backgroundImage: `url(${Bg})` }}>
@@ -19,4 +19,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Start
