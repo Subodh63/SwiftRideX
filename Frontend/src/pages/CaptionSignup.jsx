@@ -82,7 +82,7 @@ const CaptionSignup = () => {
           }}
         />
         <button className="bg-[#111] text-white font-semibold w-full mb-3 rounded px-4 py-2 text-lg placeholder:text-base">
-          Signup
+          Create account
         </button>
       </form>
       <p className="text-center">
