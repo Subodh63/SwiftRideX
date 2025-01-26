@@ -13,7 +13,7 @@ const UserSignup = () => {
     e.preventDefault()
 
     setUserData({
-      username:{
+      fullName:{
         firstName:firstName,
         lastName:lastName
       },
@@ -32,7 +32,6 @@ const UserSignup = () => {
   return (
     <div className="p-7 h-screen flex flex-col justify-between">
       <div>
-        {/* Change logo for captain  we change after completion*/}
 
         <img className="w-50 mb-10" src={RideSwiftLogo} alt="Logo" />
         <form onSubmit={(e) => SubmitHandler(e)}>
