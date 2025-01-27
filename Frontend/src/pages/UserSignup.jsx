@@ -12,12 +12,11 @@ const UserSignup = () => {
   const [userData, setUserData] = useState({});
 
   const navigate = useNavigate();
-  const { user, setUser } = React.useContext(UserDataContext)
+  const { user, setUser } = useContext(UserDataContext);
 
   const SubmitHandler = async (e) => {
     e.preventDefault();
 
-    // setUserData();
     const newUser = {
       fullname: {
         firstname: firstName,
@@ -25,25 +24,34 @@ const UserSignup = () => {
       },
       email: email,
       password: password,
+    };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/register`,
+        newUser
+      );
+
+      if (response.status === 201) {
+        const data = response.data;
+
+        setUser(data.user);
+        localStorage.setItem("token", data.token);
+
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error(
+        "Error during registration:",
+        error.response ? error.response.data : error.message
+      );
     }
 
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser)
-
-    if (response.status === 201) {
-      const data = response.data;
-
-      setUser(data.user);
-      localStorage.setItem("token", data.token);
-
-      navigate("/home");
-    }
-
-    // console.log(userData)
     setEmail("");
     setFirstName("");
     setLastName("");
     setPassword("");
-  }
+  };
 
   return (
     <div className="p-7 h-screen flex flex-col justify-between">
