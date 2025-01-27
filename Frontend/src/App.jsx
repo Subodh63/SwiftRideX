@@ -3,12 +3,13 @@ import { Route, Routes } from "react-router-dom";
 import Start from "./pages/Start";
 import UserLogin from "./pages/UserLogin";
 import UserSignup from "./pages/UserSignup";
-import CaptainLogin from "./pages/CaptainLogin";
-import CaptainSignup from "./pages/CaptainSignup";
+import CaptionLogin from "./pages/CaptinLogin";
+import CaptionSignup from "./pages/CaptainSignup";
 import Home from "./pages/Home";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserLogout from "./pages/UserLogout";
 import CaptainHome from "./pages/CaptainHome";
+import CaptainProtectWrapper from "./pages/CaptainProtectWrapper";
 
 const App = () => {
   return (
@@ -35,7 +36,13 @@ const App = () => {
             </UserProtectWrapper>
           }
         />
-        <Route path="/captain-home" element={<CaptainHome />} />
+        <Route path="/captain-home" element={
+          <CaptainProtectWrapper>
+              <CaptainHome />
+          </CaptainProtectWrapper>
+          
+          } 
+          />
         
       </Routes>
     </div>

@@ -1,20 +1,58 @@
-import React, { useState } from "react";
+import React, { useState ,useContext } from "react";
 import { Link } from "react-router-dom";
 import RideSwiftLogo from "../Images/SwiftRideX.png";
+import { CaptainDataContext } from "../Context/CaptainContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CaptinLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [captionData, setCaptionData] = useState({});
+  
 
-  const SubmitHandler = (e) => {
+  const { captain, setCaptain } = useContext(CaptainDataContext);
+  const navigate = useNavigate();
+
+  const SubmitHandler = async (e) => {
     e.preventDefault();
-    setCaptionData({
-      email: email,
-      password: password,
-    });
-    setEmail("");
-    setPassword("");
+
+    const captain = {
+      email,
+      password,
+    };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captains/login`,
+        captain // Changed from captainData to captain
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        const data = response.data;
+
+        // Save Captain details and token
+        setCaptain(data.captain);
+        localStorage.setItem("token", data.token);
+
+        // Redirect to home
+        navigate("/captain-home");
+      } else {
+        console.warn("Unexpected response status:", response.status);
+      }
+    } catch (error) {
+      console.error(
+        "Error during login:",
+        error.response ? error.response.data : error.message
+      );
+      alert(
+        error.response?.data?.message ||
+          "An error occurred during login. Please try again."
+      );
+    } finally {
+      // Clear form fields
+      setEmail("");
+      setPassword("");
+    }
   };
 
   return (
