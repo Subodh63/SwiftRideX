@@ -40,14 +40,18 @@ const UserLogin = () => {
         console.warn("Unexpected response status:", response.status);
       }
     } catch (error) {
-      console.error(
-        "Error during login:",
-        error.response ? error.response.data : error.message
-      );
-      alert(
-        error.response?.data?.message ||
-          "An error occurred during login. Please try again."
-      );
+      if (error.message === "Network Error") {
+        alert("Network error. Please check your internet connection and try again.");
+      } else {
+        console.error(
+          "Error during login:",
+          error.response ? error.response.data : error.message
+        );
+        alert(
+          error.response?.data?.message ||
+            "An error occurred during login. Please try again."
+        );
+      }
     } finally {
       // Clear form fields
       setEmail("");
