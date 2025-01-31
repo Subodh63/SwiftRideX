@@ -9,6 +9,7 @@ import VehiclePanel from "../components/VehiclePanel";
 import LookingForDriver from "../components/LookingForDriver";
 import WaitingForDriver from "../components/WaitingForDriver";
 
+
 const Home = () => {
   const [pickup, setPickup] = useState("");
   const [destination, setDestination] = useState("");
@@ -17,14 +18,13 @@ const Home = () => {
   const vehicleFoundRef = useRef(null);
   const WaitingForDriverRef = useRef(null);
 
-
   const confirmRidePanelRef = useRef(null);
   const panelRef = useRef(null);
   const panelCloseRef = useRef(null);
   const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false);
   const [ConfirmRidePanelOpen, setConfirmRidePanelOpen] = useState(false);
   const [vehicleFound, setvehicleFound] = useState(false);
-  const [WaitingForDriver, setWaitingForDriver] = useState(false)
+  const [WaitingForDriver, setWaitingForDriver] = useState(false);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -200,8 +200,11 @@ const Home = () => {
         <LookingForDriver setvehicleFound={setvehicleFound} />
       </div>
 
-      <div ref={WaitingForDriverRef} className="fixed z-10 bottom-0  bg-white px-3 py-6 pt-12 w-full">
-        <WaitingForDriver WaitingForDriver={WaitingForDriver}/>
+      <div
+        ref={WaitingForDriverRef}
+        className="fixed z-10 bottom-0  bg-white px-3 py-6 pt-12 w-full"
+      >
+        <WaitingForDriver setWaitingForDriver={setWaitingForDriver} />
       </div>
     </div>
   );
