@@ -1,18 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import RideSwiftLogo from "../Images/SwiftRideX.png";
-import map from "../Images/map.gif";
 
-const RidePopUp = (props) => {
+const ConfimRidePopup = (props) => {
+    const [OTP, setOTP] = useState("")
+    const submitHandler = (e) => {
+        e.preventDefault();
+    }
   return (
     <div>
       <h5
         className="p-1 text-center w-[93%] absolute top-0 "
-        onClick={() => props.setridePopUpPanel(false)}
+        onClick={() => props.setRidePopUpPanel(false)}
       >
         <i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i>
       </h5>
-      <h3 className="text-2xl font-semibold mb-3">New Ride for you!</h3>
+      <h3 className="text-2xl font-semibold mb-3">
+        Confirm this ride to Start
+      </h3>
       <div className="flex items-center justify-between p-3 bg-yellow-400 rounded-lg">
         <div className="flex items-center gap-3 ">
           <img
@@ -51,28 +55,40 @@ const RidePopUp = (props) => {
             </div>
           </div>
         </div>
-        <div className=" flex mt-5 w-full items-center justify-between">
-        <button
-            onClick={() => {
-              props.setridePopUpPanel(false);
+
+        <div className="mt-6 w-full">
+          <form
+            onSubmit={(e) => {
+              submitHandler(e);
             }}
-            className=" mt-1 bg-gray-300 text-gray-700 font-semibold p-3 px-10 rounded-lg"
           >
-            Ignore
-          </button>
-          <button
-            onClick={() => {
-              props.setConfimRidePopUpPanel(true);
-            }}
-            className="bg-green-600 text-white font-semibold p-3 px-10 rounded-lg"
-          >
-            Accept
-          </button>
-       
+            <input
+            value={OTP}
+            onChange={(e) => setOTP(e.target.value)}
+              type="text"
+              className="bg-[#eeeeee] rounded-xl px-6 py-4 border font-mono w-full text-lg"
+              placeholder="Enter OTP"
+            ></input>
+            <Link
+              to={"/captain-riding"}
+              className="w-full text-lg flex justify-center mt-5 bg-green-600 text-white font-semibold p-3 rounded-lg"
+            >
+              Confirm
+            </Link>
+            <button
+              onClick={() => {
+                props.setConfimRidePopUpPanel(false);
+                props.setRidePopUpPanel(false);
+              }}
+              className="w-full text-lg mt-2 bg-red-600 text-white font-semibold p-3 rounded-lg"
+            >
+              Cancel
+            </button>
+          </form>
         </div>
       </div>
     </div>
   );
 };
 
-export default RidePopUp;
+export default ConfimRidePopup;

@@ -7,26 +7,44 @@ import gsap from "gsap";
 import RideSwiftLogo from "../Images/SwiftRideX.png";
 import CaptainDetails from "../components/CaptainDetails";
 import RidePopUp from "../components/RidePopUp";
+import ConfimRidePopup from "../components/ConfimRidePopup";
 
 const CaptainHome = () => {
   const { captain } = useContext(CaptainDataContext);
-  const ridePopipPanelRef = useRef(null);
+  const ridePopUpPanelRef = useRef(null);
+  const confimRidePopUpPanelRef = useRef(null);
 
-  const [ridePopipPanel, setridePopipPanel] = useState(true);
+  const [ridePopUpPanel, setRidePopUpPanel] = useState(true);
+  const [confimRidePopUpPanel, setConfimRidePopUpPanel] = useState(false);
 
   useGSAP(
     function () {
-      if (ridePopipPanel) {
-        gsap.to(ridePopipPanelRef.current, {
+      if (setRidePopUpPanel) {
+        gsap.to(ridePopUpPanelRef.current, {
           transform: "translateY(0%)",
         });
       } else {
-        gsap.to(ridePopipPanelRef.current, {
+        gsap.to(ridePopUpPanelRef.current, {
           transform: "translateY(100%)",
         });
       }
     },
-    [ridePopipPanel]
+    [setRidePopUpPanel]
+  );
+
+  useGSAP(
+    function () {
+      if (confimRidePopUpPanel) {
+        gsap.to(confimRidePopUpPanelRef.current, {
+          transform: "translateY(0%)",
+        });
+      } else {
+        gsap.to(confimRidePopUpPanelRef.current, {
+          transform: "translateY(100%)",
+        });
+      }
+    },
+    [confimRidePopUpPanel]
   );
 
   return (
@@ -47,10 +65,22 @@ const CaptainHome = () => {
         <CaptainDetails />
       </div>
       <div
-        ref={ridePopipPanelRef}
+        ref={ridePopUpPanelRef}
         className=" fixed z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 w-full"
       >
-        <RidePopUp setridePopipPanel={setridePopipPanel} />
+        <RidePopUp
+          setRidePopUpPanel={setRidePopUpPanel}
+          setConfimRidePopUpPanel={setConfimRidePopUpPanel}
+        />
+      </div>
+      <div
+        ref={confimRidePopUpPanelRef}
+        className=" fixed z-10 h-screen bottom-0 translate-y-full bg-white px-3 py-10 pt-12 w-full"
+      >
+        <ConfimRidePopup
+          setConfimRidePopUpPanel={setConfimRidePopUpPanel}
+          setRidePopUpPanel={setRidePopUpPanel}
+        />
       </div>
     </div>
   );

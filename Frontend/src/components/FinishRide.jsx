@@ -1,19 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import RideSwiftLogo from "../Images/SwiftRideX.png";
-import map from "../Images/map.gif";
 
-const RidePopUp = (props) => {
+const FinishRide = (props) => {
+  
   return (
     <div>
       <h5
         className="p-1 text-center w-[93%] absolute top-0 "
-        onClick={() => props.setridePopUpPanel(false)}
+        onClick={() => props.setFinishRidePanel(false)}
       >
         <i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i>
       </h5>
-      <h3 className="text-2xl font-semibold mb-3">New Ride for you!</h3>
-      <div className="flex items-center justify-between p-3 bg-yellow-400 rounded-lg">
+      <h3 className="text-2xl font-semibold mb-3">
+        Finsh this Ride
+      </h3>
+      <div className="flex  mt-4 items-center justify-between p-3 border-2 border-yellow-400 rounded-lg">
         <div className="flex items-center gap-3 ">
           <img
             className="h-12 w-12 rounded-full object-cover  "
@@ -51,28 +52,19 @@ const RidePopUp = (props) => {
             </div>
           </div>
         </div>
-        <div className=" flex mt-5 w-full items-center justify-between">
-        <button
-            onClick={() => {
-              props.setridePopUpPanel(false);
-            }}
-            className=" mt-1 bg-gray-300 text-gray-700 font-semibold p-3 px-10 rounded-lg"
+
+        <div className="mt-10 w-full">
+          <Link
+            to={"/captain-home"}
+            className="w-full flex text-lg justify-center mt-5 bg-green-600 text-white font-semibold p-3 rounded-lg"
           >
-            Ignore
-          </button>
-          <button
-            onClick={() => {
-              props.setConfimRidePopUpPanel(true);
-            }}
-            className="bg-green-600 text-white font-semibold p-3 px-10 rounded-lg"
-          >
-            Accept
-          </button>
-       
+            Finish Ride
+          </Link>
+          <p className="mt-10 text-xs">Click on finish ride button if you have completed the payment</p>
         </div>
       </div>
     </div>
   );
 };
 
-export default RidePopUp;
+export default FinishRide;

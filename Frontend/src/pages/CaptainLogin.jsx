@@ -5,7 +5,7 @@ import { CaptainDataContext } from "../Context/CaptainContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const CaptinLogin = () => {
+const CaptainLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   
@@ -108,4 +108,4 @@ const CaptinLogin = () => {
   );
 };
 
-export default CaptinLogin;
+export default CaptainLogin;
