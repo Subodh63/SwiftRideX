@@ -1,14 +1,12 @@
 import React, { useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import { MapContainer, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
 import RideSwiftLogo from "../Images/SwiftRideX.png";
-import map from "../Images/map.gif";
 import "remixicon/fonts/remixicon.css";
 import LocationSearchPanel from "../components/LocationSearchPanel";
 import VehiclePanel from "../components/VehiclePanel";
 import LookingForDriver from "../components/LookingForDriver";
 import WaitingForDriver from "../components/WaitingForDriver";
-
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -123,10 +121,21 @@ const Home = () => {
         alt="RideSwift Logo"
       />
 
-      {/* Fullscreen Map - Fixed GIF display */}
-      <div className=" w-screen h-screen">
-        <img className="h-full w-full  object-cover" src={map} alt="map" />
+      {/* Fullscreen Map - Replaced static GIF with Map API */}
+      <div className="w-screen h-screen">
+        <MapContainer
+          center={[51.505, -0.09]} // Default center coordinates
+          zoom={13} // Default zoom level
+          className="h-full w-full"
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+        </MapContainer>
       </div>
+
+      {/* Rest of the UI */}
       <div className="flex flex-col justify-end h-full w-full absolute bottom-0">
         <div className="relative h-[30%]  bg-white p-5">
           <h5
@@ -165,7 +174,6 @@ const Home = () => {
             />
           </form>
         </div>
-        //{" "}
         <div ref={panelRef} className="bg-white h-0">
           <LocationSearchPanel
             setPanelOpen={setPanelOpen}

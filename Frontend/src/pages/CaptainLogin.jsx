@@ -91,8 +91,8 @@ const CaptainLogin = () => {
         </form>
         <p className="text-center">
           Join a SwiftRideX?{" "} 
-          <Link to="/caption-signup" className="text-blue-600">
-             Register as a Captain
+          <Link to="/captain-signup" className="text-blue-600">
+            Register as a Captain
           </Link>
         </p>
       </div>
