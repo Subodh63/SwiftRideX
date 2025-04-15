@@ -37,22 +37,31 @@ async function getFare(pickup, destination) {
  }
 
 module.exports.createRide = async ({
-    user,pickup,destination,vehicleType
+    user, pickup, destination, vehicleType
 }) => {
-    if (!user || !pickup || !destination || !vehicleType) {
-        throw new Error('User, pickup, and destination are required');
+    try {
+        if (!user || !pickup || !destination || !vehicleType) {
+            throw new Error('User, pickup, and destination are required');
+        }
+
+        const fare = await getFare(pickup, destination);
+        console.log(fare);
+
+        const distanceTime = await mapService.getDistanceTime(pickup, destination);
+
+        const ride = await rideModel.create({
+            user,
+            pickup,
+            destination,
+            fare: fare[vehicleType],
+            // distance: distanceTime.distance.value,
+            // duration: distanceTime.duration.value,
+            userId: user._id,
+        });
+        return ride;
+    } catch (error) {
+        console.error('Error creating ride:', error.message);
+        throw new Error('Internal server error');
     }
-
-    const fare = await getFare(pickup, destination);
-    console.log(fare);
-
-    const ride = new rideModel.create({
-        user,
-        pickup,
-        destination,
-        fare: fare[vehicleType],
-        
-    });
-    return ride;
-}
+};
 
