@@ -4,6 +4,10 @@ const ConfirmRide = ({
   setVehiclePanelOpen,
   setVehicleFound,
   setConfirmRidePanelOpen,
+  pickup,
+  destination,
+  fare,
+  vehicleType,
 }) => {
   const handleConfirm = () => {
     setVehicleFound(true);
@@ -35,7 +39,7 @@ const ConfirmRide = ({
             <i className="ri-map-pin-user-fill text-xl text-green-600"></i>
             <div>
               <h4 className="text-lg font-medium">23/12</h4>
-              <p className="text-sm text-gray-600 -mt-1">Garden Colony, Kharar</p>
+              <p className="text-sm text-gray-600 -mt-1">{pickup}</p>
             </div>
           </div>
 
@@ -44,7 +48,7 @@ const ConfirmRide = ({
             <i className="ri-map-pin-2-fill text-xl text-red-500"></i>
             <div>
               <h4 className="text-lg font-medium">45/89</h4>
-              <p className="text-sm text-gray-600 -mt-1">Phase 7, Mohali</p>
+              <p className="text-sm text-gray-600 -mt-1">{destination} </p>
             </div>
           </div>
 
@@ -52,8 +56,10 @@ const ConfirmRide = ({
           <div className="flex items-start gap-4 p-3">
             <i className="ri-currency-line text-xl text-yellow-500"></i>
             <div>
-              <h4 className="text-lg font-medium">₹143.23</h4>
-              <p className="text-sm text-gray-600 -mt-1">Cash Payment</p>
+              <h4 className="text-lg font-medium">
+                ₹{fare && vehicleType && fare[vehicleType] !== undefined ? fare[vehicleType] : "-"}
+              </h4>
+              <p className="text-sm text-black -mt-1">Cash Payment</p>
             </div>
           </div>
         </div>
@@ -61,6 +67,7 @@ const ConfirmRide = ({
         {/* Confirm Button */}
         <button
           onClick={handleConfirm}
+          
           className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition-all"
         >
           Confirm Ride

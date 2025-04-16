@@ -10,6 +10,9 @@ import WaitingForDriver from "../components/WaitingForDriver";
 import ConfirmRide from "../components/ConfirmRide";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -19,6 +22,13 @@ const Home = () => {
   const [confirmRidePanelOpen, setConfirmRidePanelOpen] = useState(false);
   const [vehicleFound, setVehicleFound] = useState(false);
   const [waitingForDriver, setWaitingForDriver] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [activeField, setActiveField] = useState(null); // 'pickup' or 'destination'
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [suggestionError, setSuggestionError] = useState("");
+  const [fare, setFare] = useState({});
+  const [vehicleType, setVehicleType] = useState(null); // 'car', 'moto', or 'auto'
+
 
   const vehiclePanelRef = useRef(null);
   const confirmRidePanelRef = useRef(null);
@@ -26,6 +36,73 @@ const Home = () => {
   const waitingForDriverRef = useRef(null);
   const panelRef = useRef(null);
   const panelCloseRef = useRef(null);
+
+  const fetchSuggestions = async (input) => {
+    if (typeof input !== "string") {
+      console.warn("fetchSuggestions called with non-string input:", input);
+      setSuggestions([]);
+      setSuggestionError("Invalid input for suggestions");
+      setLoadingSuggestions(false);
+      return;
+    }
+    if (!input || input.length < 3) {
+      setSuggestions([]);
+      setSuggestionError("");
+      setLoadingSuggestions(false);
+      return;
+    }
+    setLoadingSuggestions(true);
+    setSuggestionError("");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        `${BASE_URL}/maps/get-suggestions?input=${encodeURIComponent(input)}`,
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : undefined,
+          },
+        }
+      );
+      setSuggestions(res.data);
+      setLoadingSuggestions(false);
+    } catch (err) {
+      console.error("Error fetching suggestions:", err); // log error for debugging
+      setSuggestions([]);
+      setSuggestionError("Unable to fetch suggestions");
+      setLoadingSuggestions(false);
+    }
+  };
+
+  const handlePickupChange = (e) => {
+    const value = e.target.value;
+    setPickup(value);
+    setActiveField("pickup");
+    fetchSuggestions(value);
+  };
+
+  const handleDestinationChange = (e) => {
+    const value = e.target.value;
+    setDestination(value);
+    setActiveField("destination");
+    fetchSuggestions(value);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    // Always use the string value for the field
+    const value =
+      typeof suggestion === "object" && suggestion.description
+        ? suggestion.description
+        : String(suggestion);
+    if (activeField === "pickup") {
+      setPickup(value);
+    } else if (activeField === "destination") {
+      setDestination(value);
+    }
+    // setPanelOpen(false);
+    // setSuggestions([]);
+    // setActiveField(null);
+    // setVehiclePanelOpen(true);
+  };
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -72,6 +149,57 @@ const Home = () => {
     });
   }, [waitingForDriver]);
 
+  async function findTrip() {
+    setPanelOpen(false);
+    setVehiclePanelOpen(true);
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/rides/get-fare?pickup=${encodeURIComponent(
+          pickup
+        )}&destination=${encodeURIComponent(destination)}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token")
+              ? `Bearer ${localStorage.getItem("token")}`
+              : undefined,
+          },
+        }
+      );
+      setFare(response.data); // Set the fare state here
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching fare:", error);
+      alert("Unable to fetch fare. Please try again later.");
+    }
+  }
+
+async function createRide() {
+  const response =await axios.post(
+    `${BASE_URL}/rides/create`,
+    {
+      pickup,
+      destination,
+      vehicleType,
+    },
+    {
+      headers: {
+        Authorization: localStorage.getItem("token")
+          ? `Bearer ${localStorage.getItem("token")}`
+          : undefined,
+      },
+    }
+  )
+    .then((response) => {
+      console.log("Ride created successfully:", response.data);
+      setConfirmRidePanelOpen(true);
+    })
+    .catch((error) => {
+      console.error("Error creating ride:", error);
+      alert("Unable to create ride. Please try again later.");
+    });
+  }
+
+
   return (
     <div className="h-screen relative overflow-hidden z-10">
       {/* Map Background */}
@@ -111,22 +239,36 @@ const Home = () => {
             className="mt-4 flex flex-col space-y-2 px-5"
           >
             <input
-              onClick={() => setPanelOpen(true)}
+              onClick={() => {
+                setPanelOpen(true);
+                setActiveField("pickup");
+                fetchSuggestions(pickup);
+              }}
               value={pickup}
-              onChange={(e) => setPickup(e.target.value)}
+              onChange={handlePickupChange}
               className="bg-[#eeeeee] rounded-xl px-8 py-2 border w-full text-lg"
               type="text"
               placeholder="Add a pick-up location"
             />
             <input
-              onClick={() => setPanelOpen(true)}
+              onClick={() => {
+                setPanelOpen(true);
+                setActiveField("destination");
+                fetchSuggestions(destination);
+              }}
               value={destination}
-              onChange={(e) => setDestination(e.target.value)}
+              onChange={handleDestinationChange}
               className="bg-[#eeeeee] rounded-xl px-8 py-2 border w-full text-lg"
               type="text"
               placeholder="Enter your destination"
             />
           </form>
+          <button
+            onClick={findTrip}
+            className="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full font-semibold hover:bg-gray-800 transition duration-200 ease-in-out"
+          >
+            Find Trip
+          </button>
         </div>
 
         {/* Location Search Panel */}
@@ -138,6 +280,11 @@ const Home = () => {
           <LocationSearchPanel
             setPanelOpen={setPanelOpen}
             setVehiclePanelOpen={setVehiclePanelOpen}
+            suggestions={suggestions}
+            activeField={activeField}
+            loading={loadingSuggestions}
+            error={suggestionError}
+            onSuggestionClick={handleSuggestionClick}
           />
         </div>
       </div>
@@ -148,6 +295,8 @@ const Home = () => {
         className="fixed z-20 bottom-0 translate-y-full bg-white px-3 py-10 pt-12 w-full"
       >
         <VehiclePanel
+          selectVehicle={setVehicleType}
+          fare={fare}
           setConfirmRidePanelOpen={setConfirmRidePanelOpen}
           setVehiclePanelOpen={setVehiclePanelOpen}
         />
@@ -159,6 +308,11 @@ const Home = () => {
         className="fixed z-20 bottom-0 translate-y-full bg-white px-3 py-6 pt-12 w-full"
       >
         <ConfirmRide
+        createRide={createRide}
+        pickup={pickup}
+        destination={destination}
+        fare={fare}
+        vehicleType={vehicleType}
           setConfirmRidePanelOpen={setConfirmRidePanelOpen}
           setVehicleFound={setVehicleFound}
         />
@@ -169,7 +323,13 @@ const Home = () => {
         ref={vehicleFoundRef}
         className="fixed z-20 bottom-0 translate-y-full bg-white px-3 py-6 pt-12 w-full"
       >
-        <LookingForDriver setVehicleFound={setVehicleFound} />
+        <LookingForDriver 
+         createRide={createRide}
+         pickup={pickup}
+         destination={destination}
+         fare={fare}
+         vehicleType={vehicleType}
+        setVehicleFound={setVehicleFound} />
       </div>
 
       {/* Waiting For Driver Panel */}
